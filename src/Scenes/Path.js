@@ -46,6 +46,7 @@ class Path extends Phaser.Scene {
         });
 
         // TODO:
+        this.runMode = false 
         //  - set the run mode flag to false (after implenting run mode)
 
         // Create enemyShip as a follower type of sprite
@@ -94,8 +95,9 @@ class Path extends Phaser.Scene {
             // * Add code to check if run mode is active
             //   If run mode is active, then don't call clearPoints()
             //   (i.e., can only clear points when not in run mode)
-
+            if (!this.runMode) {
             this.clearPoints();
+            }
 
         }
 
@@ -115,11 +117,44 @@ class Path extends Phaser.Scene {
             //  point0.x, point0.y,
             //  point1.x, point1.y
             // ]
+            let i=0;
+                console.log("[");
+                    let ch = ',';
+                    for (const point of this.curve.points){
+                        if (i === this.curve.points.length - 1){
+                            ch = '';
+                        }
+                        console.log(point.x + ', ' + point.y + ch);
+                        i++;
+                    }
+                    console.log("]");
         }   
 
         if (Phaser.Input.Keyboard.JustDown(this.rKey)) {
             console.log("Run mode");
-            //
+            if (this.runMode){
+                my.sprite.enemyShip.stopFollow();
+                my.sprite.enemyShip.visible = false;
+                this.runMode = false;
+            } else {
+                this.runMode = true;
+                my.sprite.enemyShip.x = this.curve.points[0].x;
+                my.sprite.enemyShip.y = this.curve.points[0].y;
+                my.sprite.enemyShip.visible = true;
+                my.sprite.enemyShip.startFollow(
+                    {
+                        from: 0,
+                        to: 1,
+                        delay: 0,
+                        duration: 2000,
+                        ease: 'Sine.easeInOut',
+                        repeat: -1,
+                        yoyo: true,
+                        rotateToPath: true,
+                        rotationOffset: -90
+                    }
+                );
+            } 
             // TODO: 
             // Implement run mode
             // Check for runMode active
